@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Para Flor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .sky {
+        background: radial-gradient(
+          ellipse 70% 50% at 50% 18%,
+          #3d2049 0%,
+          #1e1128 55%,
+          #120a17 100%
+        );
+      }
+
+      /* ---- ambient hearts ---- */
+      .hearts {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .hearts span {
+        position: absolute;
+        bottom: -10%;
+        color: rgba(232, 160, 184, 0.35);
+        animation: floatUp linear infinite;
+      }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(0.8);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.7;
+        }
+        85% {
+          opacity: 0.3;
+        }
+        100% {
+          transform: translateY(-115vh) scale(1.1);
+          opacity: 0;
+        }
+      }
+
+      /* ---- envelope ---- */
+      .envelope {
+        position: relative;
+        width: clamp(250px, 70vw, 340px);
+        height: clamp(170px, 46vw, 226px);
+        perspective: 1200px;
+        outline: none;
+      }
+      .envelope:focus-visible .pocket {
+        box-shadow:
+          0 20px 45px -15px rgba(0, 0, 0, 0.6),
+          0 0 0 3px rgba(232, 160, 184, 0.7);
+      }
+
+      .pocket {
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        background: linear-gradient(
+          160deg,
+          #b5677d 0%,
+          #8a3f5c 60%,
+          #762f4d 100%
+        );
+        box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.6);
+        z-index: 2;
+      }
+      .pocket::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 55%;
+        background: linear-gradient(
+          160deg,
+          rgba(255, 255, 255, 0.06),
+          transparent 60%
+        );
+        clip-path: polygon(0% 100%, 50% 30%, 100% 100%);
+        border-radius: 0 0 8px 8px;
+      }
+
+      .letter {
+        position: absolute;
+        left: 50%;
+        top: 9%;
+        width: 84%;
+        height: 82%;
+        transform: translate(-50%, 0);
+        background: #faf1e4;
+        border-radius: 5px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.1rem 1rem;
+        text-align: center;
+        z-index: 1;
+        transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .letter-text {
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+        transition-delay: 0.55s;
+        font-family: "Caveat", cursive;
+        color: #5c2340;
+        line-height: 1.25;
+        font-size: clamp(1.15rem, 5.4vw, 1.55rem);
+        font-weight: 700;
+      }
+      .letter-text .accent {
+        display: inline-block;
+        margin-top: 0.35rem;
+        color: #b5453f;
+        font-size: clamp(1.3rem, 6.2vw, 1.75rem);
+      }
+      .letter-signature {
+        display: block;
+        margin-top: 0.6rem;
+        font-size: 1rem;
+        color: #8a3f5c;
+        opacity: 0.8;
+      }
+
+      .flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 58%;
+        background: linear-gradient(160deg, #c97a92 0%, #96436a 70%);
+        clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+        transform-origin: top center;
+        z-index: 3;
+        transition:
+          transform 0.8s ease-in-out,
+          z-index 0s 0.35s;
+      }
+
+      .seal {
+        position: absolute;
+        left: 50%;
+        top: 53%;
+        width: 52px;
+        height: 52px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 32% 28%,
+          #f0cf9a,
+          #caa06a 55%,
+          #93683c 100%
+        );
+        box-shadow:
+          0 6px 14px rgba(0, 0, 0, 0.4),
+          inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Caveat", cursive;
+        font-weight: 700;
+        font-size: 26px;
+        color: #5c3a1e;
+        z-index: 4;
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+
+      /* ---- opened state ---- */
+      .wrap.opened .flap {
+        transform: rotateX(-180deg);
+        z-index: 0;
+      }
+      .wrap.opened .seal {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.7) rotate(18deg);
+        pointer-events: none;
+      }
+      .wrap.opened .letter {
+        transform: translate(-50%, -128%) scale(1.04) rotate(-1.5deg);
+      }
+      .wrap.opened .letter-text {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .hint,
+      .reopen {
+        transition: opacity 0.4s ease;
+      }
+      .wrap.opened .hint {
+        opacity: 0;
+      }
+      .reopen {
+        opacity: 0;
+      }
+      .wrap.opened .reopen {
+        opacity: 1;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hearts span {
+          animation: none;
+          display: none;
+        }
+        .flap,
+        .seal,
+        .letter,
+        .letter-text,
+        .hint,
+        .reopen {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="sky min-h-screen w-full flex items-center justify-center overflow-hidden relative"
+  >
+    <div class="hearts" aria-hidden="true">
+      <span style="left: 6%; font-size: 14px; animation-duration: 11s; animation-delay: 0s;">♥</span>
+      <span style="left: 16%; font-size: 10px; animation-duration: 9s; animation-delay: 2s;">♥</span>
+      <span style="left: 28%; font-size: 16px; animation-duration: 13s; animation-delay: 1s;">♥</span>
+      <span style="left: 41%; font-size: 11px; animation-duration: 8s; animation-delay: 4s;">♥</span>
+      <span style="left: 55%; font-size: 15px; animation-duration: 12s; animation-delay: 0.5s;">♥</span>
+      <span style="left: 67%; font-size: 12px; animation-duration: 10s; animation-delay: 3s;">♥</span>
+      <span style="left: 78%; font-size: 18px; animation-duration: 14s; animation-delay: 1.5s;">♥</span>
+      <span style="left: 88%; font-size: 11px; animation-duration: 9s; animation-delay: 2.5s;">♥</span>
+      <span style="left: 35%; font-size: 13px; animation-duration: 11s; animation-delay: 5s;">♥</span>
+      <span style="left: 95%; font-size: 14px; animation-duration: 10s; animation-delay: 0.8s;">♥</span>
+    </div>
+
+    <div
+      id="wrap"
+      class="wrap relative z-10 flex flex-col items-center gap-8 px-6"
+    >
+      <p
+        class="hint uppercase tracking-[0.3em] text-[10.5px] sm:text-xs text-rose-200/70"
+      >
+        para flor &middot; toc&aacute; el sobre
+      </p>
+
+      <div
+        id="envelope"
+        class="envelope cursor-pointer select-none"
+        role="button"
+        tabindex="0"
+        aria-label="Abrir la carta"
+      >
+        <div class="pocket"></div>
+        <div class="letter">
+          <p class="letter-text"></p>
+        </div>
+        <div class="flap"></div>
+        <div class="seal"><span>F</span></div>
+      </div>
+
+      <p class="reopen text-rose-200/50 text-[10.5px] tracking-wide">
+        toc&aacute; de nuevo para cerrarla &middot; cada vez trae una frase distinta
+      </p>
+    </div>
+
+    <script>
+      const wrap = document.getElementById("wrap");
+      const envelope = document.getElementById("envelope");
+      const letterText = document.querySelector(".letter-text");
+
+      const frases = [
+        "sos la mejor novia del planeta y del universo, te amo amorcito",
+        "te amo mucho mi amor, sos lo mejor que me pasó en la vida",
+        "sos la mejor novia del mundo, te amo mucho mi amor",
+      ];
+
+      let lastIndex = -1;
+
+      function elegirFrase() {
+        if (frases.length === 1) return frases[0];
+        let i;
+        do {
+          i = Math.floor(Math.random() * frases.length);
+        } while (i === lastIndex);
+        lastIndex = i;
+        return frases[i];
+      }
+
+      function pintarFrase() {
+        const frase = elegirFrase();
+        const idx = frase.lastIndexOf(",");
+        let principal = frase;
+        let final = "";
+        if (idx !== -1) {
+          principal = frase.slice(0, idx + 1);
+          final = frase.slice(idx + 1).trim();
+        }
+        letterText.innerHTML = final
+          ? `${principal}<br><span class="accent">${final}</span><span class="letter-signature">— Gino</span>`
+          : `${principal}<span class="letter-signature">— Gino</span>`;
+      }
+
+      // frase lista desde el arranque, para que la primera apertura ya tenga texto
+      pintarFrase();
+
+      function toggleLetter() {
+        const abriendo = !wrap.classList.contains("opened");
+        if (abriendo) pintarFrase();
+        wrap.classList.toggle("opened");
+      }
+
+      envelope.addEventListener("click", toggleLetter);
+      envelope.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleLetter();
+        }
+      });
+    </script>
+  </body>
+</html>
